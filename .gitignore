@@ -1,0 +1,6 @@
+data/
+*.log
+__init__.py
+__pycache__/
+wandb/
+

@@ -85,7 +85,7 @@ class DDPMScheduler(nn.Module):
         # timesteps = np.array(num_inference_steps) 
         # self.timesteps = torch.from_numpy(timesteps).to(device)
         #self.timesteps = torch.tensor(num_inference_steps).to(device)
-        print(num_inference_steps)
+        #print(num_inference_steps)
         self.num_inference_steps = num_inference_steps
         self.timesteps = torch.arange(num_inference_steps, dtype=torch.float32).to(device)
 
@@ -126,17 +126,17 @@ class DDPMScheduler(nn.Module):
         
         # TODO: calculate $beta_t$ for the current timestep using the cumulative product of alphas
         prev_t = self.previous_timestep(t) 
-        alpha_prod_t = self.alphas_prod[t] 
-        alpha_prod_t_prev =  self.alphas_prod[prev_t]  
+        alpha_prod_t = self.alphas_cumprod[t] 
+        alpha_prod_t_prev =  self.alphas_cumprod[prev_t]  
         current_beta_t = self.betas[t] 
     
         # TODO: For t > 0, compute predicted variance $\beta_t$ (see formula (6) and (7) from https://arxiv.org/pdf/2006.11239.pdf)
         # and sample from it to get previous sample
         # x_{t-1} ~ N(pred_prev_sample, variance) == add variance to pred_sample
-        variance = 0
+        #variance = 0
 
         # we always take the log of variance, so clamp it to ensure it's not 0
-        variance = torch.clamp(variance, min=1e-20)
+        #variance = torch.clamp(variance, min=1e-20)
 
         # TODO: we start with two types of variance as mentioned in Section 3.2 of https://arxiv.org/pdf/2006.11239.pdf
         # 1. fixed_small: $\sigma_t = \beta_t$, this one is optimal for $x_0$ being deterministic
@@ -227,14 +227,13 @@ class DDPMScheduler(nn.Module):
                 The predicted previous sample.
         """
         #print(f"step at timestep {t}")
-        t = timestep
+        t = timestep.to(torch.int)
         prev_t = self.previous_timestep(t)
-        
         # TODO: 1. compute alphas, betas
-        alpha_prod_t = self.alpha_cumprod[t] 
-        alpha_prod_t_prev = self.alpha_cumprod[prev_t]  
-        beta_prod_t = torch.cumprod(self.betas)[t] 
-        beta_prod_t_prev = torch.cumprod(self.betas)[prev_t]  
+        alpha_prod_t = self.alphas_cumprod[t] 
+        alpha_prod_t_prev = self.alphas_cumprod[prev_t]  
+        #beta_prod_t = torch.cumprod(self.betas)[t] 
+        #beta_prod_t_prev = torch.cumprod(self.betas)[prev_t]  
         current_alpha_t = self.alphas[t] 
         current_beta_t = self.betas[t] 
         

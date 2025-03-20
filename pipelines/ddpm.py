@@ -107,9 +107,9 @@ class DDPMPipeline:
                 c = None
             
             # TODO: 1. predict noise model_output
-            model_output = self.unet(image, t)
+            model_output = self.unet(image, t.long())
             
-            if guidance_scale is not None or guidance_scale != 1.0:
+            if guidance_scale is not None and guidance_scale != 1.0:
                 # TODO: implement cfg
                 uncond_model_output, cond_model_output = model_output.chunk(2)
                 model_output = None
@@ -127,7 +127,7 @@ class DDPMPipeline:
             image = None 
         
         # TODO: return final image, re-scale to [0, 1]
-        image = None 
+        image = (image + 1) / 2  
         
         # convert to PIL images
         image = image.cpu().permute(0, 2, 3, 1).numpy()

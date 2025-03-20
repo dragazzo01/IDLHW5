@@ -253,7 +253,7 @@ def main():
         logger.info(f"  Total optimization steps = {args.max_train_steps}")
     # Only show the progress bar once on each machine.
     progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
-    print("Hello")
+
     # training
     for epoch in range(args.num_epochs):
         

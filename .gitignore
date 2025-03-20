@@ -2,5 +2,6 @@ data/
 *.log
 __pycache__/
 wandb/
-expirements/
+experiments/
+slurm_out/
 

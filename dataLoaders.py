@@ -26,7 +26,7 @@ class ImageDataset(torch.utils.data.Dataset):
             for file in files:
                 self.image_paths.append(os.path.join(subdir, file))
 
-        self.image_paths = self.image_paths[:15]
+        # self.image_paths = self.image_paths[:15]
 
 
     def __len__(self):

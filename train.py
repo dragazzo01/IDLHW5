@@ -252,7 +252,7 @@ def main():
         logger.info(f"  Total optimization steps per epoch {num_update_steps_per_epoch}")
         logger.info(f"  Total optimization steps = {args.max_train_steps}")
     # Only show the progress bar once on each machine.
-    progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
+    # progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
 
     # training
     for epoch in range(args.num_epochs):
@@ -275,7 +275,7 @@ def main():
         
         # TODO: finish this
         #for step, (None, labels) in enumerate(train_loader):
-        for step, images in enumerate(train_loader):  
+        for step, images in tqdm(enumerate(train_loader)):  
             batch_size = images.size(0)
             
             # TODO: send to device
@@ -333,7 +333,7 @@ def main():
             optimizer.step()
             scheduler.step()
             
-            progress_bar.update(1)
+            # progress_bar.update(1)
             
             # logger
             if step % 100 == 0 and is_primary(args) and args.wandb:
@@ -370,7 +370,7 @@ def main():
             
         # save checkpoint
         if is_primary(args):
-            save_checkpoint(unet_wo_ddp, scheduler_wo_ddp, vae_wo_ddp, class_embedder, optimizer, epoch, save_dir=save_dir)
+            save_checkpoint(unet_wo_ddp, scheduler_wo_ddp, vae_wo_ddp, class_embedder, optimizer, epoch, grid_image, save_dir=save_dir)
 
 
 if __name__ == '__main__':

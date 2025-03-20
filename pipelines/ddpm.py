@@ -5,7 +5,8 @@ from tqdm import tqdm
 import torch 
 import torch.nn as nn
 from utils import randn_tensor
-
+from schedulers.scheduling_ddpm import DDPMScheduler
+import numpy as np
 
 
 class DDPMPipeline:
@@ -80,17 +81,17 @@ class DDPMPipeline:
                 classes = torch.tensor(classes, device=device)
             
             # TODO: get uncond classes
-            uncond_classes = None
+            uncond_classes = None 
             # TODO: get class embeddings from classes
             class_embeds = None 
             # TODO: get uncon class embeddings
             uncond_embeds = None 
         
-        # starts with random noise
+        # TODO: starts with random noise
         image = randn_tensor(image_shape, generator=generator, device=device)
 
         # TODO: set step values using set_timesteps of scheduler
-        #self.scheduler = None
+        # self.scheduler = DDPMScheduler(num_train_timesteps=self.scheduler.num_train_timesteps)
         self.scheduler.set_timesteps(num_inference_steps, device)
         
         # TODO: inverse diffusion process with for loop
@@ -107,27 +108,30 @@ class DDPMPipeline:
                 c = None
             
             # TODO: 1. predict noise model_output
-            model_output = self.unet(image, t.long())
+            model_output = self.unet(model_input, t, c)
             
-            if guidance_scale is not None and guidance_scale != 1.0:
+            if guidance_scale is not None or guidance_scale != 1.0:
                 # TODO: implement cfg
                 uncond_model_output, cond_model_output = model_output.chunk(2)
                 model_output = None
             
             # TODO: 2. compute previous image: x_t -> x_t-1 using scheduler
-            image = self.scheduler.step(model_output, t, image)
+            image = self.scheduler.step(model_output, t, image, generator)
             
         
         # NOTE: this is for latent DDPM
         # TODO: use VQVAE to get final image
         if self.vae is not None:
             # NOTE: remember to rescale your images
-            image = None 
+            image = None
             # TODO: clamp your images values
-            image = None 
+            image = None
         
         # TODO: return final image, re-scale to [0, 1]
-        image = (image + 1) / 2  
+        print("Min value:", torch.min(image))  # checking to make sure the image is in the range I thought
+        print("Max value:", torch.max(image))
+        image = (image + 1) / 2 
+        
         
         # convert to PIL images
         image = image.cpu().permute(0, 2, 3, 1).numpy()

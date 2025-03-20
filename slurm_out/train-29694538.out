@@ -1,0 +1,145 @@
+v024.ib.bridges2.psc.edu
+job starting
+Unloading the anaconda2 module (if loaded)...
+Unloading the anaconda3 module (if loaded)...
+Pytorch 1.13.1
+-----------------------------
+
+Description
+-----------
+The modulefile AI/pytorch_23.02-1.13.1-py3 provides a Pytorch 1.13.1
+development environment for Artificial Intelligence(AI)/Machine
+Learning(ML)/Big Data(BD) on top of Python 3.
+
+Module contents
+---------------
+Several popular libraries are included in this environment, such as:
+    bokeh, matplotlib, mkl, numba, numpy, pandas, pillow, scikit-image,
+scikit-learn, torchaudio, torchvision.
+
+To check the full list of available packages in this environment, first
+activate it and then run the command
+    conda list
+
+* beautifulsoup4 4.11.1
+* blas 1.0
+* bokeh 3.0.3
+* cudatoolkit 10.1.243
+* cudnn 8.0.4
+* cython 0.29.32
+* ipython 8.8.0
+* matplotlib 3.6.2
+* mkl 2021.4.0
+* nccl 2.8.3.1
+* notebook 6.5.2
+* numba 0.55.1
+* numpy 1.21.5
+* pandas 1.5.2
+* pillow 9.3.0
+* python 3.10.9
+* pytorch 1.13.1
+* scikit-image 0.19.3
+* scikit-learn 1.0.1
+* scikit-learn-intelex 2021.20221004.171507
+* scipy 1.10.0
+* torch 1.13.1
+* torchaudio 0.13.1
+* torchvision 0.14.1
+
+If you need to further customize this environment (e.g., install additional
+packages, or upgrade a particular package),
+you could first clone this environment as follows:
+    conda create --prefix <path to a dir in which you can write> --clone $ENV
+Then activate the newly spawned environment and proceed with your
+customization.
+
+To get further help with conda usage, you can try one of the following:
+    conda -h
+    conda <command> -h
+
+Module Activation
+-------------------
+The following commands have been executed for activating the module:
+    # module load AI/pytorch_23.02-1.13.1-py3
+    # source /opt/packages/anaconda3/2020.11/etc/profile.d/conda.sh # conda
+init
+    # conda activate /opt/packages/AI/pytorch_23.02-1.13.1-py3
+    # (/opt/packages/AI/pytorch_23.02-1.13.1-py3) USERNAME@BRIDGES-2:~ $ # <<
+Your prompt should have changed to something similar.
+
+For deactivating this module, run either of the following commands:
+    conda deactivate
+    # or
+    module unload AI/pytorch_23.02-1.13.1-py3
+
+[1;32mThe module has been activated and is ready to be used.[0m
+
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: torchmetrics[image] in /jet/home/ramireza/.local/lib/python3.10/site-packages (from -r requirements.txt (line 1)) (1.6.3)
+Requirement already satisfied: ruamel.yaml in /jet/home/ramireza/.local/lib/python3.10/site-packages (from -r requirements.txt (line 2)) (0.18.10)
+Requirement already satisfied: wandb in /jet/home/ramireza/.local/lib/python3.10/site-packages (from -r requirements.txt (line 3)) (0.19.6)
+Requirement already satisfied: einops in /jet/home/ramireza/.local/lib/python3.10/site-packages (from -r requirements.txt (line 4)) (0.8.1)
+Requirement already satisfied: packaging>17.1 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (22.0)
+Requirement already satisfied: torch>=2.0.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (2.6.0)
+Requirement already satisfied: numpy>1.20.0 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (1.21.5)
+Requirement already satisfied: lightning-utilities>=0.8.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (0.14.2)
+Requirement already satisfied: scipy>1.0.0 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (1.10.0)
+Requirement already satisfied: torch-fidelity<=0.4.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (0.3.0)
+Requirement already satisfied: torchvision>=0.15.1 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torchmetrics[image]->-r requirements.txt (line 1)) (0.21.0)
+Requirement already satisfied: ruamel.yaml.clib>=0.2.7 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from ruamel.yaml->-r requirements.txt (line 2)) (0.2.12)
+Requirement already satisfied: pyyaml in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (6.0)
+Requirement already satisfied: docker-pycreds>=0.4.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (0.4.0)
+Requirement already satisfied: setproctitle in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (1.3.4)
+Requirement already satisfied: protobuf!=4.21.0,!=5.28.0,<6,>=3.19.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (5.29.3)
+Requirement already satisfied: psutil>=5.0.0 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (5.9.0)
+Requirement already satisfied: setuptools in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (65.6.3)
+Requirement already satisfied: gitpython!=3.1.29,>=1.0.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (3.1.44)
+Requirement already satisfied: click!=8.0.0,>=7.1 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (8.1.8)
+Requirement already satisfied: requests<3,>=2.0.0 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (2.28.1)
+Requirement already satisfied: sentry-sdk>=2.0.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (2.22.0)
+Requirement already satisfied: typing-extensions<5,>=4.4 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (4.12.2)
+Requirement already satisfied: pydantic<3,>=2.6 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (2.10.6)
+Requirement already satisfied: platformdirs in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from wandb->-r requirements.txt (line 3)) (2.5.2)
+Requirement already satisfied: six>=1.4.0 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from docker-pycreds>=0.4.0->wandb->-r requirements.txt (line 3)) (1.16.0)
+Requirement already satisfied: gitdb<5,>=4.0.1 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 3)) (4.0.12)
+Requirement already satisfied: annotated-types>=0.6.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from pydantic<3,>=2.6->wandb->-r requirements.txt (line 3)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.27.2 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from pydantic<3,>=2.6->wandb->-r requirements.txt (line 3)) (2.27.2)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 3)) (1.26.14)
+Requirement already satisfied: idna<4,>=2.5 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 3)) (3.4)
+Requirement already satisfied: certifi>=2017.4.17 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 3)) (2022.12.7)
+Requirement already satisfied: charset-normalizer<3,>=2 in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 3)) (2.0.4)
+Requirement already satisfied: nvidia-nccl-cu12==2.21.5 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (2.21.5)
+Requirement already satisfied: filelock in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (3.17.0)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.6.2 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (0.6.2)
+Requirement already satisfied: nvidia-cusparse-cu12==12.3.1.170 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.3.1.170)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.4.127 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.127)
+Requirement already satisfied: fsspec in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (2025.3.0)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.4.127 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.127)
+Requirement already satisfied: triton==3.2.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (3.2.0)
+Requirement already satisfied: nvidia-curand-cu12==10.3.5.147 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (10.3.5.147)
+Requirement already satisfied: nvidia-cufft-cu12==11.2.1.3 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (11.2.1.3)
+Requirement already satisfied: nvidia-cusolver-cu12==11.6.1.9 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (11.6.1.9)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.4.127 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.127)
+Requirement already satisfied: nvidia-cudnn-cu12==9.1.0.70 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (9.1.0.70)
+Requirement already satisfied: nvidia-nvtx-cu12==12.4.127 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.127)
+Requirement already satisfied: networkx in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (3.4.2)
+Requirement already satisfied: jinja2 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.4.127 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.127)
+Requirement already satisfied: nvidia-cublas-cu12==12.4.5.8 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (12.4.5.8)
+Requirement already satisfied: sympy==1.13.1 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from sympy==1.13.1->torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (1.3.0)
+Requirement already satisfied: tqdm in /jet/home/ramireza/.local/lib/python3.10/site-packages (from torch-fidelity<=0.4.0->torchmetrics[image]->-r requirements.txt (line 1)) (4.67.1)
+Requirement already satisfied: Pillow in /jet/packages/AI/pytorch_23.02-1.13.1-py3/lib/python3.10/site-packages (from torch-fidelity<=0.4.0->torchmetrics[image]->-r requirements.txt (line 1)) (9.3.0)
+Requirement already satisfied: smmap<6,>=3.0.1 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 3)) (5.0.2)
+Requirement already satisfied: MarkupSafe>=2.0 in /jet/home/ramireza/.local/lib/python3.10/site-packages (from jinja2->torch>=2.0.0->torchmetrics[image]->-r requirements.txt (line 1)) (3.0.2)
+03/20/2025 09:55:22 - INFO - __main__ - Training with a single process on 1 device (cuda).
+03/20/2025 09:55:22 - INFO - __main__ - Creating dataset
+Traceback (most recent call last):
+  File "/ocean/projects/cis250019p/ramireza/IDLHW5/train.py", line 377, in <module>
+    main()
+  File "/ocean/projects/cis250019p/ramireza/IDLHW5/train.py", line 154, in main
+    args.run_name = f'exp-{len(os.listdir(args.output_dir))}-{args.run_name}'
+FileNotFoundError: [Errno 2] No such file or directory: 'experiments'
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          29694538       GPU train co ramireza  R       0:09      1 v024
+job finished

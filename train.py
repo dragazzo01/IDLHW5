@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument("--num_classes", type=int, default=100, help="number of classes in dataset")
 
     # training
-    parser.add_argument("--run_name", type=str, default=None, help="run_name")
+    parser.add_argument("--run_name", type=str, default="test", help="run_name")
     parser.add_argument("--output_dir", type=str, default="experiments", help="output folder")
     parser.add_argument("--num_epochs", type=int, default=10)
     parser.add_argument("--learning_rate", type=float, default=1e-4, help="learning rate")

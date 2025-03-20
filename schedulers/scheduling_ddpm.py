@@ -40,20 +40,21 @@ class DDPMScheduler(nn.Module):
         self.clip_sample_range = clip_sample_range
         
     
-        # calculate betas
+        # TODO: calculate betas
         if self.beta_schedule == 'linear':
             # This is the DDPM implementation
+            # betas = [beta_start + ((beta_end - beta_start)*(t-1))/(num_train_timesteps) for t in num_train_timesteps]
             betas = torch.linspace(self.beta_start, self.beta_end, self.num_train_timesteps, dtype=torch.float32)
         self.register_buffer("betas", betas)
          
-        # calculate alphas
+        # TODO: calculate alphas
         alphas = 1.0 - betas
         self.register_buffer("alphas", alphas)
-        # calculate alpha cumulative product
-        alphas_cumprod = torch.cumprod(alphas, dim=0) 
+        # TODO: calculate alpha cumulative product
+        alphas_cumprod = torch.cumprod(alphas, dim=0)
         self.register_buffer("alphas_cumprod", alphas_cumprod)
         
-        # timesteps
+        # TODO: timesteps
         timesteps = torch.arange(self.num_train_timesteps, dtype=torch.float32)
         self.register_buffer("timesteps", timesteps)
         
@@ -73,7 +74,6 @@ class DDPMScheduler(nn.Module):
             device (`str` or `torch.device`, *optional*):
                 The device to which the timesteps should be moved to. If `None`, the timesteps are not moved.
         """
-        #print("I Have set the timesteps")
         if num_inference_steps > self.num_train_timesteps:
             raise ValueError(
                 f"`num_inference_steps`: {num_inference_steps} cannot be larger than `self.config.train_timesteps`:"
@@ -82,12 +82,10 @@ class DDPMScheduler(nn.Module):
             )
             
         # TODO: set timesteps
-        # timesteps = np.array(num_inference_steps) 
-        # self.timesteps = torch.from_numpy(timesteps).to(device)
-        #self.timesteps = torch.tensor(num_inference_steps).to(device)
-        #print(num_inference_steps)
-        self.num_inference_steps = num_inference_steps
-        self.timesteps = torch.arange(num_inference_steps, dtype=torch.float32).to(device)
+        ratio = self.num_train_timesteps // num_inference_steps
+        timesteps = np.array([ratio*i for i in range(num_inference_steps)])
+        
+        self.timesteps = torch.from_numpy(timesteps).to(device)
 
 
     def __len__(self):
@@ -106,9 +104,11 @@ class DDPMScheduler(nn.Module):
         """
         num_inference_steps = (
             self.num_inference_steps if self.num_inference_steps else self.num_train_timesteps
-        )
+        ) 
         # TODO: caluclate previous timestep
-        prev_t = max(timestep - 1, 0)
+        timesteps = self.timesteps.numpy()
+        index = np.argmax(timesteps == timestep)
+        prev_t = self.timesteps[index-1] if index > 0 else None
         return prev_t
 
     
@@ -122,38 +122,38 @@ class DDPMScheduler(nn.Module):
         Return:
             variance (`torch.Tensor`): The variance $sigma_t$ for the given timestep.
         """
-        #print(f"_get_variance at timestep {t}")
+        
         
         # TODO: calculate $beta_t$ for the current timestep using the cumulative product of alphas
         prev_t = self.previous_timestep(t) 
-        alpha_prod_t = self.alphas_cumprod[t] 
-        alpha_prod_t_prev =  self.alphas_cumprod[prev_t]  
-        current_beta_t = self.betas[t] 
+        alpha_prod_t = self.alphas_cumprod[t]
+        alpha_prod_t_prev =  self.alphas_cumprod[prev_t]
+        current_beta_t = self.betas[t]
     
         # TODO: For t > 0, compute predicted variance $\beta_t$ (see formula (6) and (7) from https://arxiv.org/pdf/2006.11239.pdf)
         # and sample from it to get previous sample
         # x_{t-1} ~ N(pred_prev_sample, variance) == add variance to pred_sample
-        #variance = 0
+        variance = ((1-alpha_prod_t_prev)/(1-alpha_prod_t))*current_beta_t  
 
         # we always take the log of variance, so clamp it to ensure it's not 0
-        #variance = torch.clamp(variance, min=1e-20)
+        variance = torch.clamp(variance, min=1e-20)
 
         # TODO: we start with two types of variance as mentioned in Section 3.2 of https://arxiv.org/pdf/2006.11239.pdf
         # 1. fixed_small: $\sigma_t = \beta_t$, this one is optimal for $x_0$ being deterministic
         # 2. fixed_large: $\sigma_t^2 = \beta$, this one is optimal for $x_0 \sim mathcal{N}(0, 1)$
         if self.variance_type == "fixed_small":
             # TODO: fixed small variance
-            variance = ((1 - alpha_prod_t_prev) / (1 - alpha_prod_t)) * current_beta_t 
+            variance = ((1-alpha_prod_t_prev)/(1-alpha_prod_t))*current_beta_t 
         elif self.variance_type == "fixed_large":
             # TODO: fixed large variance
             variance = current_beta_t
             # TODO: small hack: set the initial (log-)variance like so to get a better decoder log likelihood.
-            # if t == 1:
-            #     variance = variance
+            if t == 1:
+                variance = variance
         else:
             raise NotImplementedError(f"Variance type {self.variance_type} not implemented.")
-        return torch.clamp(variance, min=1e-20)
 
+        return torch.clamp(variance, min=1e-20)
     
     
     def add_noise(
@@ -178,25 +178,25 @@ class DDPMScheduler(nn.Module):
             noisy_samples (`torch.Tensor`): 
                 The noisy samples.
         """
-        #print(f"add_noise at timestep {timesteps}")
+        
         # make sure alphas the on the same device as samples
-        alphas_cumprod = self.alphas_cumprod.to(device=original_samples.device,dtype=original_samples.dtype)
+        alphas_cumprod = self.alphas_cumprod.to(dtype=original_samples.dtype)
         timesteps = timesteps.to(original_samples.device)
         
         # TODO: get sqrt alphas
-        sqrt_alpha_prod = torch.sqrt(alphas_cumprod[timesteps])
-        #sqrt_alpha_prods = None 
+        sqrt_alpha_prod = torch.sqrt(alphas_cumprod)
+        sqrt_alpha_prod = sqrt_alpha_prod[timesteps]
         while len(sqrt_alpha_prod.shape) < len(original_samples.shape):
             sqrt_alpha_prod = sqrt_alpha_prod.unsqueeze(-1)
             
         # TODO: get sqrt one miucs alphas
-        sqrt_one_minus_alpha_prod = torch.sqrt(1.0 - alphas_cumprod[timesteps]) 
-        #sqrt_one_minus_alpha_prod = None
+        sqrt_one_minus_alpha_prod = 1.0 - alphas_cumprod[timesteps]
+        sqrt_one_minus_alpha_prod = torch.sqrt(sqrt_one_minus_alpha_prod)
         while len(sqrt_one_minus_alpha_prod.shape) < len(original_samples.shape):
             sqrt_one_minus_alpha_prod = sqrt_one_minus_alpha_prod.unsqueeze(-1)
         
         # TODO: add noise to the original samples using the formula (14) from https://arxiv.org/pdf/2006.11239.pdf
-        noisy_samples = sqrt_alpha_prod * original_samples + sqrt_one_minus_alpha_prod * noise 
+        noisy_samples = sqrt_alpha_prod * original_samples + sqrt_one_minus_alpha_prod * noise
         return noisy_samples
     
     
@@ -209,8 +209,7 @@ class DDPMScheduler(nn.Module):
     ) -> torch.Tensor:
         """
         Predict the sample from the previous timestep by reversing the SDE. This function propagates the diffusion
-        process from the learned model outputs (most often the predicted noise). This is the q function in write-up 
-        (I think) more precisly q(x_{t-1} | x_t, x_0) = N(x_{t-1};u(x_t, x_0), B_tI)
+        process from the learned model outputs (most often the predicted noise).
 
         Args:
             model_output (`torch.Tensor`):
@@ -226,21 +225,24 @@ class DDPMScheduler(nn.Module):
             pred_prev_sample (`torch.Tensor`):
                 The predicted previous sample.
         """
-        #print(f"step at timestep {t}")
-        t = timestep.to(torch.int)
+        
+        
+        t = timestep
         prev_t = self.previous_timestep(t)
+        
         # TODO: 1. compute alphas, betas
-        alpha_prod_t = self.alphas_cumprod[t] 
-        alpha_prod_t_prev = self.alphas_cumprod[prev_t]  
-        #beta_prod_t = torch.cumprod(self.betas)[t] 
-        #beta_prod_t_prev = torch.cumprod(self.betas)[prev_t]  
+        alpha_prod_t = self.alphas_cumprod[t]
+        alpha_prod_t_prev = self.alphas_cumprod[prev_t] 
+        betas_prod = torch.cumprod(self.betas, dim=0)
+        beta_prod_t = betas_prod[t]
+        beta_prod_t_prev = betas_prod[prev_t] 
         current_alpha_t = self.alphas[t] 
-        current_beta_t = self.betas[t] 
+        current_beta_t = self.betas[t]
         
         # TODO: 2. compute predicted original sample from predicted noise also called
         # "predicted x_0" of formula (15) from https://arxiv.org/pdf/2006.11239.pdf
         if self.prediction_type == 'epsilon':
-            pred_original_sample = (sample - torch.sqrt(1.0 - alpha_prod_t) * model_output) / torch.sqrt(alpha_prod_t)
+            pred_original_sample = (sample - torch.sqrt(1.0-alpha_prod_t)*model_output)/torch.sqrt(alpha_prod_t)
         else:
             raise NotImplementedError(f"Prediction type {self.prediction_type} not implemented.")
 
@@ -252,12 +254,12 @@ class DDPMScheduler(nn.Module):
 
         # TODO: 4. Compute coefficients for pred_original_sample x_0 and current sample x_t
         # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-        pred_original_sample_coeff = (torch.sqrt(alpha_prod_t_prev) * current_beta_t) / (1.0 - alpha_prod_t) 
-        current_sample_coeff = (torch.sqrt(current_alpha_t)*(1-alpha_prod_t_prev)) / (1.0 - alpha_prod_t) 
+        pred_original_sample_coeff = (torch.sqrt(alpha_prod_t_prev)*current_beta_t)/(1.0-alpha_prod_t_prev)
+        current_sample_coeff = (torch.sqrt(current_alpha_t)*(1-alpha_prod_t_prev))/(1.0-alpha_prod_t) 
 
         # 5. Compute predicted previous sample µ_t
         # See formula (7) from https://arxiv.org/pdf/2006.11239.pdf
-        pred_prev_sample = pred_original_sample_coeff * pred_original_sample + current_sample_coeff * sample
+        pred_prev_sample = pred_original_sample_coeff*pred_original_sample + current_sample_coeff*sample 
 
 
         # 6. Add noise
@@ -268,9 +270,9 @@ class DDPMScheduler(nn.Module):
                 model_output.shape, generator=generator, device=device, dtype=model_output.dtype
             )
             # TODO: use self,get_variance and variance_noise
-            variance = variance_noise * self._get_variance(t) 
+            variance = self._get_variance(t)*variance_noise
         
         # TODO: add variance to prev_sample
-        pred_prev_sample = self.add_noise(pred_prev_sample, variance, t) 
+        pred_prev_sample = self.add_noise(pred_prev_sample, variance, t)
         
         return pred_prev_sample

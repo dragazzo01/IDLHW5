@@ -24,6 +24,5 @@ unet_ch_mult: [1, 2, 2, 4]
 unet_attn: [2, 3]
 unet_dropout: 0.0
 
-device: cpu
 root: data/
 wandb: false

@@ -131,7 +131,7 @@ def main():
     logger.info("Creating dataset")
     # TODO: use transform to normalize your images to [-1, 1] (Done in DataLoader)
     # TODO: use image folder for your train dataset
-    train_dataset = ImageDataset(args.root + "train", args.image_size)
+    train_dataset = ImageDataset(args.root, args.image_size)
     
     # TODO: setup dataloader
     sampler = None 
@@ -141,7 +141,7 @@ def main():
     # TODO: shuffle
     shuffle = False if sampler else True
     # TODO dataloader
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, sampler=sampler, shuffle=shuffle,  num_workers=4, pin_memory=True) 
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=shuffle,  num_workers=4, pin_memory=True) 
     
     # calculate total batch_size
     total_batch_size = args.batch_size * args.world_size 
@@ -252,7 +252,7 @@ def main():
         logger.info(f"  Total optimization steps per epoch {num_update_steps_per_epoch}")
         logger.info(f"  Total optimization steps = {args.max_train_steps}")
     # Only show the progress bar once on each machine.
-    progress_bar = tqdm(range(args.max_train_steps), disable=not is_primary(args))
+    progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
 
     # training
     for epoch in range(args.num_epochs):
@@ -330,7 +330,8 @@ def main():
                 pass 
             
             # TODO: step your optimizer
-            scheduler.step(epoch)
+            optimizer.step()
+            scheduler.step()
             
             progress_bar.update(1)
             
@@ -350,10 +351,10 @@ def main():
             # random sample 4 classes
             classes = torch.randint(0, args.num_classes, (4,), device=device)
             # TODO: fill pipeline
-            gen_images = pipeline(None) 
+            gen_images = pipeline() 
         else:
             # TODO: fill pipeline
-            gen_images = pipeline(None) 
+            gen_images = pipeline() 
             
         # create a blank canvas for the grid
         grid_image = Image.new('RGB', (4 * args.image_size, 1 * args.image_size))

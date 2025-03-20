@@ -4,7 +4,7 @@ image_size: 128
 batch_size: 2
 num_workers: 4
 num_classes:
-run_name: exp-13-ddpm
+run_name: exp-12-ddpm
 output_dir: experiments
 num_epochs: 50
 learning_rate: 1e-3

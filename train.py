@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument("--num_classes", type=int, default=100, help="number of classes in dataset")
 
     # training
-    parser.add_argument("--run_name", type=str, default="test", help="run_name")
+    parser.add_argument("--run_name", type=str, default=None, help="run_name")
     parser.add_argument("--output_dir", type=str, default="experiments", help="output folder")
     parser.add_argument("--num_epochs", type=int, default=10)
     parser.add_argument("--learning_rate", type=float, default=1e-4, help="learning rate")
@@ -131,7 +131,8 @@ def main():
     logger.info("Creating dataset")
     # TODO: use transform to normalize your images to [-1, 1] (Done in DataLoader)
     # TODO: use image folder for your train dataset
-    train_dataset = ImageDataset(args.root, args.image_size)
+    #print(args.root)
+    train_dataset = ImageDataset(args.data_dir, args.image_size)
     
     # TODO: setup dataloader
     sampler = None 
@@ -252,11 +253,10 @@ def main():
         logger.info(f"  Total optimization steps per epoch {num_update_steps_per_epoch}")
         logger.info(f"  Total optimization steps = {args.max_train_steps}")
     # Only show the progress bar once on each machine.
-    # progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
+    progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
 
     # training
     for epoch in range(args.num_epochs):
-        
         # set epoch for distributed sampler, this is for distribution training
         if hasattr(train_loader.sampler, 'set_epoch'):
             train_loader.sampler.set_epoch(epoch)
@@ -275,7 +275,7 @@ def main():
         
         # TODO: finish this
         #for step, (None, labels) in enumerate(train_loader):
-        for step, images in tqdm(enumerate(train_loader)):  
+        for step, images in enumerate(train_loader):  
             batch_size = images.size(0)
             
             # TODO: send to device
@@ -301,11 +301,11 @@ def main():
                 # NOTE: if not cfg, set class_emb to None
                 class_emb = None
             
-            # TODO: sample noise (CHATGPT)
+            # TODO: sample noise _this is epsilon (i think)_
             noise = torch.randn_like(images)  
             
             # TODO: sample timestep t(CHATGPT)
-            timesteps = torch.randint(0, ddpm_scheduler.num_train_timesteps, (batch_size,), device=device).long() 
+            timesteps = torch.randint(1, ddpm_scheduler.num_train_timesteps, (batch_size,), device=device).long() 
             
             # TODO: add noise to images using scheduler
             noisy_images = ddpm_scheduler.add_noise(images, noise, timesteps)
@@ -333,7 +333,7 @@ def main():
             optimizer.step()
             scheduler.step()
             
-            # progress_bar.update(1)
+            progress_bar.update(1)
             
             # logger
             if step % 100 == 0 and is_primary(args) and args.wandb:
@@ -354,13 +354,13 @@ def main():
             gen_images = pipeline() 
         else:
             # TODO: fill pipeline
-            gen_images = pipeline() 
+            gen_images = pipeline(batch_size=args.batch_size, num_inference_steps=args.num_inference_steps) 
             
         # create a blank canvas for the grid
         grid_image = Image.new('RGB', (4 * args.image_size, 1 * args.image_size))
         # paste images into the grid
         for i, image in enumerate(gen_images):
-            x = (i % 4) * args.image_size
+            x = (i % 4) * args.image_size       
             y = 0
             grid_image.paste(image, (x, y))
         

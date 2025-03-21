@@ -95,7 +95,7 @@ class DDPMPipeline:
         self.scheduler.set_timesteps(num_inference_steps, device)
         
         # TODO: inverse diffusion process with for loop
-        for t in self.progress_bar(self.scheduler.timesteps):
+        for t in self.progress_bar(reversed(self.scheduler.timesteps)):
             
             # NOTE: this is for CFG
             if guidance_scale is not None or guidance_scale != 1.0:
@@ -108,15 +108,15 @@ class DDPMPipeline:
                 c = None
             
             # TODO: 1. predict noise model_output
-            model_output = self.unet(model_input, t, c)
+            model_output = self.unet(image, t.long())
             
-            if guidance_scale is not None or guidance_scale != 1.0:
+            if guidance_scale is not None and guidance_scale != 1.0:
                 # TODO: implement cfg
                 uncond_model_output, cond_model_output = model_output.chunk(2)
                 model_output = None
             
             # TODO: 2. compute previous image: x_t -> x_t-1 using scheduler
-            image = self.scheduler.step(model_output, t, image, generator)
+            image = self.scheduler.step(model_output, t, image)
             
         
         # NOTE: this is for latent DDPM
@@ -128,10 +128,16 @@ class DDPMPipeline:
             image = None
         
         # TODO: return final image, re-scale to [0, 1]
+        print("Min value:", torch.min(image))  # problem: rescaling based off current out, not standardized
+        print("Max value:", torch.max(image))
+        min_val = torch.min(image)
+        max_val = torch.max(image)
+        if max_val != min_val:
+            image = (image - min_val) / (max_val - min_val)
+        else:
+            image = image*0
         print("Min value:", torch.min(image))  # checking to make sure the image is in the range I thought
         print("Max value:", torch.max(image))
-        image = (image + 1) / 2 
-        
         
         # convert to PIL images
         image = image.cpu().permute(0, 2, 3, 1).numpy()

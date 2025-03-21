@@ -1,15 +1,15 @@
 run_name: ddpm
 seed: 42
-data_dir: ./data/cifar-10-batches-py/batch_1
-image_size: 32
-batch_size: 64
+data_dir: ./data/imagenet100_128x128/train
+image_size: 128
+batch_size: 32
 num_workers: 4
 num_classes: 10
 num_epochs: 200
-learning_rate: 1e-3
+learning_rate: 1e-4
 weight_decay: 1e-2
 num_train_timesteps: 1000
-num_inference_steps: 150
+num_inference_steps: 1000
 beta_start: 0.0001
 beta_end: 0.02
 beta_schedule: linear
@@ -24,5 +24,5 @@ unet_ch_mult: [1, 2, 2, 4]
 unet_attn: [2, 3]
 unet_dropout: 0.0
 
-root: ./data/cifar-10-batches-py/batch_1
+root: data/imagenet100_128x128/train
 wandb: false

@@ -1,7 +1,5 @@
 #!/bin/bash
-#SBATCH --nodes 1
-#SBATCH --cpus-per-task 1
-#SBATCH -t 05:00:00
+#SBATCH -t 5:00:00
 #SBATCH --partition=GPU-shared
 #SBATCH --gres=gpu:v100-32:1
 #SBATCH --output=/ocean/projects/cis250019p/ramireza/IDLHW5/slurm_out/train-%j.out

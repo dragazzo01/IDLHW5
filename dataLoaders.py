@@ -22,9 +22,13 @@ class ImageDataset(torch.utils.data.Dataset):
                 transforms.ToTensor(),  # Converts to [0, 1] range
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalizes to [-1, 1] range
             ])
+        num_images = 0
         for subdir, _, files in os.walk(root):
             for file in files:
+                # if num_images > 64:
+                #     break
                 self.image_paths.append(os.path.join(subdir, file))
+                num_images += 1
 
         # self.image_paths = self.image_paths[:15]
 

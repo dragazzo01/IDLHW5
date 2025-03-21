@@ -1,0 +1,34 @@
+Midterm Report
+
+Introduction:
+
+In this research project we implement a diffusion model. This model is capable of generating high quality images of a specific subject given training examples in a dataset. For instance the diffiusion model can create a high quality novel image of a cat given a dataset of cat images. Diffusion models are important as they are able to train more stably and generate more diverse, higher quality images than other generative models such as GANs.
+
+Our goal is to minimize the Frechet Inception distance. Given two distributions, N(µr,Σr) and N(µg,Σg), the distance is computed as ||µr −µg||2 +Tr(Σr +Σg −2(ΣrΣg)1/2). 
+
+
+We use techniques from the following papers: Denoising Diffusion Probabilistic Models (Ho, Jain, Abbeel), Denoising diffusion implicit models (Song, Meng, Ermon), High-resolution image synthesis with latent diffusion models (Rombach et. al.), Auto-encoding variational bayes (Kingma), and Taming transformers for highresolution image synthesis (Esser et. al). 
+
+eplain which paper used to get distance metric
+
+explain which paper connects to problem itself (general)
+
+
+
+Methodology:
+
+how does the model work (inputs and outputs)
+
+data source identified and prep steps outlines
+
+what metric are we using???
+
+loss functions
+
+Results (generated images):
+
+paste
+
+Future directions:
+
+what are the next steps we are going to take???

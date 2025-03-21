@@ -128,8 +128,8 @@ class DDPMPipeline:
         
         # TODO: return final image, re-scale to [0, 1]
         # Dynamically rescale to [0, 1] based on the min and max values
-        min_val = torch.min(image)
         max_val = torch.max(image)
+        min_val = torch.min(image)
 
         # Avoid division by zero in case min_val == max_val
         if max_val != min_val:
@@ -138,10 +138,10 @@ class DDPMPipeline:
             rescaled_image = image * 0  # If all pixels are the same, set to 0
         
         # convert to PIL images
-        image = image.cpu().permute(0, 2, 3, 1).numpy()
-        image = self.numpy_to_pil(image)
+        rescaled_image = rescaled_image.cpu().permute(0, 2, 3, 1).numpy()
+        rescaled_image = self.numpy_to_pil(rescaled_image)
         
-        return image
+        return rescaled_image
         
 
 

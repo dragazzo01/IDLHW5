@@ -4,7 +4,7 @@ import os
 def load_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=None, checkpoint_path='checkpoints/checkpoint.pth'):
     
     print("loading checkpoint")
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, weights_only=False)
     
     print("loading unet")
     unet.load_state_dict(checkpoint['unet_state_dict'])

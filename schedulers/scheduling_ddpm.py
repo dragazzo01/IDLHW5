@@ -88,7 +88,7 @@ class DDPMScheduler(nn.Module):
         #print(num_inference_steps)
         ratio = self.num_train_timesteps // num_inference_steps  
         self.num_inference_steps = num_inference_steps      
-        self.timesteps = torch.tensor([ratio*i for i in range(num_inference_steps)], dtype=torch.int32).to(device)
+        self.timesteps = torch.tensor([ratio*i for i in range(1, num_inference_steps)], dtype=torch.int32).to(device)
 
 
     def __len__(self):
@@ -240,7 +240,7 @@ class DDPMScheduler(nn.Module):
         """
         #print(f"step at timestep {t}")
         t = timestep.to(torch.int)
-        prev_t = t-1
+        prev_t = self.previous_timestep
         # TODO: 1. compute alphas, betas
         # alpha_prod_t = self.alphas_cumprod[t] 
         # alpha_prod_t_prev = self.alphas_cumprod[prev_t]  

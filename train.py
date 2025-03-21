@@ -19,7 +19,7 @@ import torchvision.transforms.v2 as T
 from models import UNet, VAE, ClassEmbedder
 from schedulers import DDPMScheduler, DDIMScheduler
 from pipelines import DDPMPipeline
-from utils import seed_everything, init_distributed_device, is_primary, AverageMeter, str2bool, save_checkpoint
+from utils import seed_everything, init_distributed_device, is_primary, AverageMeter, str2bool, save_checkpoint, load_checkpoint
 
 from dataLoaders import ImageDataset
 
@@ -196,7 +196,7 @@ def main():
     # TODO: setup optimizer
     optimizer = torch.optim.AdamW(unet.parameters(), lr=args.learning_rate)
     # TODO: setup scheduler
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)  
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)  
     
     # max train steps
     num_update_steps_per_epoch = len(train_loader)
@@ -219,7 +219,7 @@ def main():
     if args.use_ddim:
         scheduler_wo_ddp = DDIMScheduler(None)
     else:
-        scheduler_wo_ddp = scheduler
+        scheduler_wo_ddp = ddpm_scheduler
     
     # TODO: setup evaluation pipeline
     # NOTE: this pipeline is not differentiable and only for evaluatin
@@ -239,7 +239,8 @@ def main():
         wandb_logger = wandb.init(
             project='IDL HW5', 
             name=args.run_name, 
-            config=vars(args))
+            config=vars(args),
+            reinit=True)
     
     # Start training    
     if is_primary(args):
@@ -256,7 +257,10 @@ def main():
     progress_bar = tqdm(range(len(train_loader)), disable=not is_primary(args))
 
     # training
-    for epoch in range(args.num_epochs):
+    epoch_start = 0
+    if epoch_start > 0:
+        load_checkpoint(unet, ddpm_scheduler, optimizer=optimizer, checkpoint_path="experiments/exp-5-ddpm/checkpoints/checkpoint_epoch_12.pth")
+    for epoch in range(epoch_start, args.num_epochs):
         
         # set epoch for distributed sampler, this is for distribution training
         if hasattr(train_loader.sampler, 'set_epoch'):
@@ -332,7 +336,7 @@ def main():
             
             # TODO: step your optimizer
             optimizer.step()
-            scheduler.step()
+            lr_scheduler.step()
             
             progress_bar.update(1)
             
@@ -340,7 +344,7 @@ def main():
             if step % 100 == 0 and is_primary(args) and args.wandb:
                 logger.info(f"Epoch {epoch+1}/{args.num_epochs}, Step {step}/{num_update_steps_per_epoch}, Loss {loss.item()} ({loss_m.avg})")
                 wandb_logger.log({'loss': loss_m.avg})
-
+        progress_bar.reset()
         # validation
         # send unet to evaluation mode
         unet.eval()        

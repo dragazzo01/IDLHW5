@@ -8,7 +8,7 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
-data = unpickle("/ocean/projects/cis250019p/dragazzo/HW5/IDLHW5/data/cifar-10-batches-py/data_batch_2")
+data = unpickle("/ocean/projects/cis250019p/dragazzo/HW5/IDLHW5/data/cifar-10-batches-py/data_batch_4")
 print(data.keys())
 
 for i, image_array in tqdm(enumerate(data[b'data']), ascii=True):
@@ -18,4 +18,4 @@ for i, image_array in tqdm(enumerate(data[b'data']), ascii=True):
 
     rgb_image = np.stack([red_channel, green_channel, blue_channel], axis=-1)
     image = Image.fromarray(rgb_image, 'RGB')
-    image.save(f'/ocean/projects/cis250019p/dragazzo/HW5/IDLHW5/data/cifar-10-batches-py/batch_2/train_img_{i}.png')
+    image.save(f'/ocean/projects/cis250019p/dragazzo/HW5/IDLHW5/data/cifar-10-batches-py/batch_4/train_img_{i}.png')

@@ -26,9 +26,12 @@ def save_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=No
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    if not os.path.exists('images'):
+        os.makedirs('images')
+
     # Define checkpoint file name
     checkpoint_path = os.path.join(save_dir, f'checkpoint_epoch_{epoch}.pth')
-    image_path = os.path.join(save_dir, f'image_epoch_{epoch}.jpg')
+    image_path = os.path.join('images', f'image_epoch_{epoch}.jpg')
     checkpoint = {
         'unet_state_dict': unet.state_dict(),
         'scheduler_state_dict': scheduler.state_dict(),

@@ -9,26 +9,26 @@ Our goal is to minimize the Frechet Inception distance. Given two distributions,
 
 We use techniques from the following papers: Denoising Diffusion Probabilistic Models (Ho, Jain, Abbeel), Denoising diffusion implicit models (Song, Meng, Ermon), High-resolution image synthesis with latent diffusion models (Rombach et. al.), Auto-encoding variational bayes (Kingma), and Taming transformers for highresolution image synthesis (Esser et. al). 
 
-eplain which paper used to get distance metric
+The Song paper describes the FID distance that we used as an evaluation metric. The Ho paper  
 
-explain which paper connects to problem itself (general)
 
 
 
 Methodology:
 
-how does the model work (inputs and outputs)
+The DDPM model can be thought of as a Markov chain where at each step in the forward process Gaussian noise is added to the data. In the backward process the model is trained to remove the noise at each step. A U-net architecture with positional encodings and attention mechanisms is used in the model. The input during the training phase is an image from the dataset and the inference phase is pure Gaussian noise. The output from the training phase is the predicted noise added and for the inference phase is the newly generated image.
 
-data source identified and prep steps outlines
 
-what metric are we using???
+The dataset is a 130,000 image dataset with 100 classes. Each image is resized to be 128x128 pixels and the data is then loaded into batches to train efficiently.
 
-loss functions
+As mentioned earlier we use the Frechet Inception Distance to evaluate the model where a lower distance is better.
+
+We use mean squared error as a loss function that calculates the error between the noise was actually added during the forward process and the noise predicted by the model.
 
 Results (generated images):
 
-paste
+__TODO TODO____
 
 Future directions:
 
-what are the next steps we are going to take???
+Now that we have completed the DDPM model, we will implement a latent diffusion model and a classifier free guidance model. We will also consider implementing a Neurite Orientation Dispersion and Density Imaging model.

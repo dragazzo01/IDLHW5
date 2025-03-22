@@ -2,4 +2,7 @@ data/
 *.log
 __pycache__/
 wandb/
+experiments/
+slurm_out/
+images/
 

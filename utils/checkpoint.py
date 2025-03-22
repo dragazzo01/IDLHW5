@@ -4,7 +4,7 @@ import os
 def load_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=None, checkpoint_path='checkpoints/checkpoint.pth'):
     
     print("loading checkpoint")
-    checkpoint = torch.load(checkpoint_path)
+    checkpoint = torch.load(checkpoint_path, weights_only=False)
     
     print("loading unet")
     unet.load_state_dict(checkpoint['unet_state_dict'])
@@ -22,13 +22,16 @@ def load_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=No
     
         
 
-def save_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=None, epoch=None, save_dir='checkpoints'):
+def save_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=None, epoch=None, grid_image=None, save_dir='checkpoints'):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    if not os.path.exists('images'):
+        os.makedirs('images')
+
     # Define checkpoint file name
     checkpoint_path = os.path.join(save_dir, f'checkpoint_epoch_{epoch}.pth')
-
+    image_path = os.path.join('images', f'image_epoch_{epoch}.jpg')
     checkpoint = {
         'unet_state_dict': unet.state_dict(),
         'scheduler_state_dict': scheduler.state_dict(),
@@ -48,6 +51,7 @@ def save_checkpoint(unet, scheduler, vae=None, class_embedder=None, optimizer=No
     
     # Save checkpoint
     torch.save(checkpoint, checkpoint_path)
+    grid_image.save(image_path, format='JPEG')
     print(f"Checkpoint saved at {checkpoint_path}")
     
     # Manage checkpoint history

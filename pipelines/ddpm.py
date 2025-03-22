@@ -94,7 +94,7 @@ class DDPMPipeline:
         self.scheduler.set_timesteps(num_inference_steps, device)
         
         # TODO: inverse diffusion process with for loop
-        for t in self.progress_bar(self.scheduler.timesteps):
+        for t in self.progress_bar(reversed(self.scheduler.timesteps)):
             
             # NOTE: this is for CFG
             if guidance_scale is not None or guidance_scale != 1.0:
@@ -107,9 +107,9 @@ class DDPMPipeline:
                 c = None
             
             # TODO: 1. predict noise model_output
-            model_output = self.unet(image, t)
+            model_output = self.unet(image, t.long())
             
-            if guidance_scale is not None or guidance_scale != 1.0:
+            if guidance_scale is not None and guidance_scale != 1.0:
                 # TODO: implement cfg
                 uncond_model_output, cond_model_output = model_output.chunk(2)
                 model_output = None
@@ -127,13 +127,21 @@ class DDPMPipeline:
             image = None 
         
         # TODO: return final image, re-scale to [0, 1]
-        image = None 
+        # Dynamically rescale to [0, 1] based on the min and max values
+        max_val = torch.max(image)
+        min_val = torch.min(image)
+
+        # Avoid division by zero in case min_val == max_val
+        if max_val != min_val:
+            rescaled_image = (image - min_val) / (max_val - min_val)
+        else:
+            rescaled_image = image * 0  # If all pixels are the same, set to 0
         
         # convert to PIL images
-        image = image.cpu().permute(0, 2, 3, 1).numpy()
-        image = self.numpy_to_pil(image)
+        rescaled_image = rescaled_image.cpu().permute(0, 2, 3, 1).numpy()
+        rescaled_image = self.numpy_to_pil(rescaled_image)
         
-        return image
+        return rescaled_image
         
 
 

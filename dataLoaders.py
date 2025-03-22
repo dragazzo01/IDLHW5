@@ -22,11 +22,15 @@ class ImageDataset(torch.utils.data.Dataset):
                 transforms.ToTensor(),  # Converts to [0, 1] range
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalizes to [-1, 1] range
             ])
+        #print(root)
         for subdir, _, files in os.walk(root):
-            for file in files:
-                self.image_paths.append(os.path.join(subdir, file))
-
-        self.image_paths = self.image_paths[:15]
+            print(subdir)
+            if "batch_" in subdir:
+                for file in files:
+                    self.image_paths.append(os.path.join(subdir, file))
+        # print("HELLO")
+        #self.image_paths = self.image_paths[:32]
+        # print(self.image_paths)
 
 
     def __len__(self):
